@@ -62,7 +62,7 @@ Start the server:
 Bash
 
 npm run dev
-Access the App: Open http://localhost:5000. Click "Sign In" to be automatically logged in as a Guest.
+Access the App: Open http://localhost:5000/. Click "Sign In" to be automatically logged in as a Guest.
 
 📂 Project Structure
 Plaintext
