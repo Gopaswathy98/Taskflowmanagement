@@ -59,6 +59,18 @@ A full-stack web application for managing tasks and projects with secure authent
    ```
 
 The application will be available at `http://localhost:5000`
+🖥️ How to View the Project
+Since this is a local development version, follow these steps to see it in action:
+
+Clone the repository.
+
+Run npm install.
+
+Run npm run dev.
+
+Open http://localhost:5000 in your browser.
+
+Note: Use the "Sign In" button to enter the dashboard instantly via Guest Mode.
 
 ## 📂 Project Structure
 
