@@ -110,20 +110,22 @@ export default function Dashboard() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-8 text-white">
+      {/* Welcome Header - Changed to Solid Blue for Visibility */}
+      <div className="bg-blue-600 rounded-2xl p-8 text-white shadow-lg">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold mb-2">
-              Welcome back, {user?.firstName || "User"}!
+            {/* Forced bright white text with a shadow to ensure it's visible */}
+            <h2 className="text-3xl font-bold mb-2 text-white drop-shadow-md">
+              Welcome back, {user?.firstName || "Guest"}!
             </h2>
-            <p className="text-primary-100 text-lg">
+            {/* Forced bright light-blue text for the sub-heading */}
+            <p className="text-blue-100 text-lg font-semibold">
               Here's what's happening with your projects today.
             </p>
           </div>
           <div className="hidden md:block">
             <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4">
-              <TrendingUp size={48} />
+              <TrendingUp size={48} className="text-white" />
             </div>
           </div>
         </div>
