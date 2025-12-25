@@ -59,6 +59,8 @@ A full-stack web application for managing tasks and projects with secure authent
    ```
 
 The application will be available at `http://localhost:5000`
+
+
 🖥️ How to View the Project
 Since this is a local development version, follow these steps to see it in action:
 
