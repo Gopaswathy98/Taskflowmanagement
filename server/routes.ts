@@ -6,26 +6,27 @@ import { insertTaskSchema, insertProjectSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
+  // Auth middleware (Keep this to avoid breaking imports, but we will bypass checks)
   await setupAuth(app);
 
-  // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  // Use a constant ID for the "Guest" user since Replit Auth is unavailable on Render
+  const GUEST_USER_ID = "guest-user-123";
+
+  // Auth routes - Modified to return a mock user for the UI
+  app.get('/api/auth/user', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
+      // Try to get guest user, or create one if your storage requires it
+      const user = await storage.getUser(GUEST_USER_ID);
+      res.json(user || { id: GUEST_USER_ID, username: "Guest User", role: "admin" });
     } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
+      res.json({ id: GUEST_USER_ID, username: "Guest User", role: "admin" });
     }
   });
 
-  // Task routes
-  app.get("/api/tasks", isAuthenticated, async (req: any, res) => {
+  // Task routes - Removed isAuthenticated
+  app.get("/api/tasks", async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const tasks = await storage.getTasks(userId);
+      const tasks = await storage.getTasks(GUEST_USER_ID);
       res.json(tasks);
     } catch (error) {
       console.error("Error fetching tasks:", error);
@@ -33,11 +34,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/tasks/:id", isAuthenticated, async (req: any, res) => {
+  app.get("/api/tasks/:id", async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
       const taskId = parseInt(req.params.id);
-      const task = await storage.getTask(taskId, userId);
+      const task = await storage.getTask(taskId, GUEST_USER_ID);
       
       if (!task) {
         return res.status(404).json({ message: "Task not found" });
@@ -50,12 +50,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/tasks", isAuthenticated, async (req: any, res) => {
+  app.post("/api/tasks", async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
       const taskData = insertTaskSchema.parse({
         ...req.body,
-        createdById: userId,
+        createdById: GUEST_USER_ID,
       });
       
       const task = await storage.createTask(taskData);
@@ -69,13 +68,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/tasks/:id", isAuthenticated, async (req: any, res) => {
+  app.put("/api/tasks/:id", async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
       const taskId = parseInt(req.params.id);
       const taskData = insertTaskSchema.partial().parse(req.body);
       
-      const task = await storage.updateTask(taskId, taskData, userId);
+      const task = await storage.updateTask(taskId, taskData, GUEST_USER_ID);
       
       if (!task) {
         return res.status(404).json({ message: "Task not found" });
@@ -91,12 +89,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/tasks/:id", isAuthenticated, async (req: any, res) => {
+  app.delete("/api/tasks/:id", async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
       const taskId = parseInt(req.params.id);
-      
-      const deleted = await storage.deleteTask(taskId, userId);
+      const deleted = await storage.deleteTask(taskId, GUEST_USER_ID);
       
       if (!deleted) {
         return res.status(404).json({ message: "Task not found" });
@@ -110,10 +106,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Project routes
-  app.get("/api/projects", isAuthenticated, async (req: any, res) => {
+  app.get("/api/projects", async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const projects = await storage.getProjects(userId);
+      const projects = await storage.getProjects(GUEST_USER_ID);
       res.json(projects);
     } catch (error) {
       console.error("Error fetching projects:", error);
@@ -121,12 +116,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/projects", isAuthenticated, async (req: any, res) => {
+  app.post("/api/projects", async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
       const projectData = insertProjectSchema.parse({
         ...req.body,
-        ownerId: userId,
+        ownerId: GUEST_USER_ID,
       });
       
       const project = await storage.createProject(projectData);
@@ -141,10 +135,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Stats routes
-  app.get("/api/stats", isAuthenticated, async (req: any, res) => {
+  app.get("/api/stats", async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const stats = await storage.getTaskStats(userId);
+      const stats = await storage.getTaskStats(GUEST_USER_ID);
       res.json(stats);
     } catch (error) {
       console.error("Error fetching stats:", error);
@@ -152,44 +145,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin routes
-  app.get("/api/admin/users", isAuthenticated, async (req: any, res) => {
+  // Admin routes - Modified to let our Guest be an admin for demo purposes
+  app.get("/api/admin/users", async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const currentUser = await storage.getUser(userId);
-      
-      if (!currentUser || currentUser.role !== "admin") {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-      
       const users = await storage.getAllUsers();
       res.json(users);
     } catch (error) {
       console.error("Error fetching users:", error);
       res.status(500).json({ message: "Failed to fetch users" });
-    }
-  });
-
-  app.put("/api/admin/users/:id/role", isAuthenticated, async (req: any, res) => {
-    try {
-      const adminId = req.user.claims.sub;
-      const userId = req.params.id;
-      const { role } = req.body;
-      
-      if (!role || !["user", "admin"].includes(role)) {
-        return res.status(400).json({ message: "Invalid role" });
-      }
-      
-      const user = await storage.updateUserRole(userId, role, adminId);
-      
-      if (!user) {
-        return res.status(403).json({ message: "Admin access required or user not found" });
-      }
-      
-      res.json(user);
-    } catch (error) {
-      console.error("Error updating user role:", error);
-      res.status(500).json({ message: "Failed to update user role" });
     }
   });
 
