@@ -23,14 +23,15 @@ jobs:
 
       - name: Install and Build
         run: |
+          cd client
           npm install
           npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # This folder must match your build output
-          path: ./client/dist
+          # This points to the exact folder where React puts your website
+          path: client/dist
 
       - name: Deploy to GitHub Pages
         id: deployment
