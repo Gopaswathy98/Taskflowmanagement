@@ -22,7 +22,6 @@ jobs:
           node-version: "20"
 
       - name: Install and Build
-        # We go into client to build, but the output might go to the root
         run: |
           cd client
           npm install
@@ -31,8 +30,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Changed from client/dist to just dist
-          path: dist
+          # This is the most important line - pointing to client/dist
+          path: client/dist
 
       - name: Deploy to GitHub Pages
         id: deployment
