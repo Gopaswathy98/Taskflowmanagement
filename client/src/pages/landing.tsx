@@ -4,7 +4,9 @@ import { CheckSquare } from "lucide-react";
 
 export default function Landing() {
   const handleLogin = () => {
-    window.location.href = "/api/login";
+    // ⚠️ THE LOOP BREAKER: Point this directly to your Render URL
+    // This stops the browser from looking at GitHub for the login page.
+    window.location.href = "https://taskflowmanagement.onrender.com/api/login";
   };
 
   return (
@@ -34,7 +36,7 @@ export default function Landing() {
 
           <div className="mt-6 text-center">
             <p className="text-xs text-secondary-500">
-              Secure authentication powered by Replit
+              Secure authentication powered by Render
             </p>
           </div>
         </CardContent>
