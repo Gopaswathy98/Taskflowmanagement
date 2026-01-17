@@ -4,6 +4,8 @@ import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
 export default defineConfig({
+  // This line fixes the white screen on GitHub Pages
+  base: '/Taskflowmanagement/', 
   plugins: [
     react(),
     runtimeErrorOverlay(),
