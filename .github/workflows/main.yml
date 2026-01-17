@@ -22,15 +22,16 @@ jobs:
           node-version: "20"
 
       - name: Install and Build
-        # We manually change directory (cd) for every command to be safe
+        # This tells the robot to go inside the client folder to do the work
         run: |
-          cd client && npm install
-          cd client && npm run build
+          cd client
+          npm install
+          npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # This points to the final build folder
+          # This points to where the website files end up
           path: client/dist
 
       - name: Deploy to GitHub Pages
