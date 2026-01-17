@@ -1,22 +1,89 @@
-import { QueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { Switch, Route, Router as WouterRouter } from "wouter";
+import { queryClient } from "./lib/queryClient";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { useAuth } from "@/hooks/useAuth";
+import { Sidebar } from "@/components/sidebar";
+import { Header } from "@/components/header";
+import { TaskModal } from "@/components/task-modal";
+import Landing from "@/pages/landing";
+import Dashboard from "@/pages/dashboard";
+import Tasks from "@/pages/tasks";
+import Admin from "@/pages/admin";
+import NotFound from "@/pages/not-found";
 
-// ⚠️ IMPORTANT: Put your Render Backend URL here 
-// It should look like: "https://taskflow-backend.onrender.com"
-const RENDER_BACKEND_URL = "YOUR_RENDER_URL_HERE"; 
+function Navigation() {
+  const { isAuthenticated, isLoading } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [taskModalOpen, setTaskModalOpen] = useState(false);
 
-export const apiRequest = async (method: string, url: string, data?: any) => {
-  // This line forces the app to talk to Render, not GitHub Pages
-  const res = await fetch(`${RENDER_BACKEND_URL}${url}`, {
-    method,
-    headers: data ? { "Content-Type": "application/json" } : {},
-    body: data ? JSON.stringify(data) : undefined,
-  });
-
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "An error occurred");
+  if (isLoading || !isAuthenticated) {
+    return <Landing />;
   }
-  return res;
-};
 
-export const queryClient = new QueryClient();
+  return (
+    <div className="flex h-screen bg-secondary-50">
+      <Sidebar 
+        isOpen={sidebarOpen} 
+        onClose={() => setSidebarOpen(false)} 
+      />
+      
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header 
+          onMenuClick={() => setSidebarOpen(true)}
+          onNewTask={() => setTaskModalOpen(true)}
+        />
+        
+        <main className="flex-1 overflow-y-auto bg-secondary-50">
+          <Switch>
+            <Route path="/" component={Dashboard} />
+            <Route path="/tasks" component={Tasks} />
+            <Route path="/projects">
+              <div className="p-6 text-center py-20">
+                <h3 className="text-xl font-semibold text-secondary-900 mb-2">Projects Section</h3>
+                <p className="text-secondary-600">Project management interface coming soon</p>
+              </div>
+            </Route>
+            <Route path="/team">
+              <div className="p-6 text-center py-20">
+                <h3 className="text-xl font-semibold text-secondary-900 mb-2">Team Section</h3>
+                <p className="text-secondary-600">Team management interface coming soon</p>
+              </div>
+            </Route>
+            <Route path="/reports">
+              <div className="p-6 text-center py-20">
+                <h3 className="text-xl font-semibold text-secondary-900 mb-2">Reports Section</h3>
+                <p className="text-secondary-600">Analytics and reporting interface coming soon</p>
+              </div>
+            </Route>
+            <Route path="/admin" component={Admin} />
+            <Route component={NotFound} />
+          </Switch>
+        </main>
+      </div>
+
+      <TaskModal
+        isOpen={taskModalOpen}
+        onClose={() => setTaskModalOpen(false)}
+      />
+    </div>
+  );
+}
+
+// Ensure "export default App" is at the bottom
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <WouterRouter base="/Taskflowmanagement">
+          <Navigation />
+        </WouterRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
+
+export default App;
