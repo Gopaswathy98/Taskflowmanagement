@@ -2,13 +2,13 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import session from "express-session";
 import express, { type Express } from "express";
-import MemoryStoreConfig from "memorystore";
+import createMemoryStore from "memorystore";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 
 const scryptAsync = promisify(scrypt);
-const MemoryStore = MemoryStoreConfig(session);
+const MemoryStore = createMemoryStore(session);
 
 async function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
@@ -24,26 +24,26 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
-  // 1. Tell the server it is behind Render's proxy
+  // Required for secure cookies on Render
   app.set("trust proxy", 1); 
 
-  const sessionSettings: session.SessionOptions = {
-    secret: process.env.SESSION_SECRET || "taskflow_secure_session",
-    resave: false,
-    saveUninitialized: false,
-    store: new MemoryStore({
-      checkPeriod: 86400000,
-    }),
-    cookie: {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      // 2. These two lines are the ONLY way to make GitHub talk to Render
-      secure: true, 
-      sameSite: "none", 
-    },
-  };
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET || "taskflow_secure_session",
+      resave: false,
+      saveUninitialized: false,
+      store: new MemoryStore({
+        checkPeriod: 86400000,
+      }),
+      cookie: {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        secure: true,      // Must be true for HTTPS
+        sameSite: "none",  // Must be "none" for GitHub -> Render
+      },
+    })
+  );
 
-  app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
 
@@ -71,7 +71,6 @@ export function setupAuth(app: Express) {
     }
   });
 
-  // Re-creating the login/user routes your app expects
   app.post("/api/login", passport.authenticate("local"), (req, res) => {
     res.json(req.user);
   });
