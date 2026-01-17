@@ -1,14 +1,16 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { queryClient, apiRequest } from "../lib/queryClient"; // Ensure this points to our fixed queryClient
+import { queryClient, apiRequest } from "../lib/queryClient"; 
 import { useToast } from "@/hooks/use-toast";
 
 export function useAuth() {
   const { toast } = useToast();
 
+  // This check MUST go to Render, otherwise it thinks you are logged out
   const { data: user, isLoading, error } = useQuery({
     queryKey: ["/api/user"],
     queryFn: () => apiRequest("GET", "/api/user").then(res => res.json()),
     retry: false,
+    staleTime: Infinity, // Keep the user session active
   });
 
   const loginMutation = useMutation({
