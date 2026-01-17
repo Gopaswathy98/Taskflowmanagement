@@ -26,12 +26,14 @@ jobs:
           cd client
           npm install
           npm run build
+          # This next line is a "trick" to make sure the folder is visible to the robot
+          cp -r dist ../dist_final 
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # This is the most important line - pointing to client/dist
-          path: client/dist
+          # We are now looking at the folder we just moved to the top level
+          path: dist_final
 
       - name: Deploy to GitHub Pages
         id: deployment
