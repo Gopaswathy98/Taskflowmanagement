@@ -1,8 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 
-// ⚠️ STEP 1: Replace this URL with your ACTUAL Render Backend URL
-// It should look like "https://taskflow-management-backend.onrender.com"
-const RENDER_BACKEND_URL = "PASTE_YOUR_RENDER_URL_HERE"; 
+// This is your official Render Backend URL
+const RENDER_BACKEND_URL = "https://taskflowmanagement.onrender.com"; 
 
 export const apiRequest = async (method: string, url: string, data?: any) => {
   // This line tells the "Sign In" button to go to Render, NOT GitHub
@@ -10,6 +9,8 @@ export const apiRequest = async (method: string, url: string, data?: any) => {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
+    // ⚠️ THE FIX: This allows Render to save your login session in the browser
+    credentials: "include", 
   });
 
   if (!res.ok) {
