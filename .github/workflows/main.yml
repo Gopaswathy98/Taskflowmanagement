@@ -22,7 +22,7 @@ jobs:
           node-version: "20"
 
       - name: Install and Build
-        # This tells the robot to go inside the client folder to do the work
+        # This explicitly tells the robot: "Go to client, install there, build there"
         run: |
           cd client
           npm install
@@ -31,7 +31,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # This points to where the website files end up
+          # This must point exactly to the dist folder inside client
           path: client/dist
 
       - name: Deploy to GitHub Pages
