@@ -1,62 +1,23 @@
-import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 
-// This tells the frontend to talk to your Render server
-const BASE_URL = "https://taskflowmanagement.onrender.com";
+/** * IMPORTANT: Replace the URL below with your actual Render URL 
+ * Example: "https://task-management-backend.onrender.com"
+ */
+const BACKEND_URL = "PASTE_YOUR_RENDER_URL_HERE"; 
 
-async function throwIfResNotOk(res: Response) {
-  if (!res.ok) {
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
-  }
-}
-
-export async function apiRequest(
-  method: string,
-  url: string,
-  data?: unknown | undefined,
-): Promise<Response> {
-  // We add BASE_URL here so it finds your Render server
-  const res = await fetch(`${BASE_URL}${url}`, {
+export const apiRequest = async (method: string, url: string, data?: any) => {
+  // This ensures we call the backend on Render, not GitHub
+  const res = await fetch(`${BACKEND_URL}${url}`, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
   });
 
-  await throwIfResNotOk(res);
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "An error occurred");
+  }
   return res;
-}
+};
 
-type UnauthorizedBehavior = "returnNull" | "throw";
-export const getQueryFn: <T>(options: {
-  on401: UnauthorizedBehavior;
-}) => QueryFunction<T> =
-  ({ on401: unauthorizedBehavior }) =>
-  async ({ queryKey }) => {
-    // We add BASE_URL here as well
-    const res = await fetch(`${BASE_URL}${queryKey[0] as string}`, {
-      credentials: "include",
-    });
-
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
-    }
-
-    await throwIfResNotOk(res);
-    return await res.json();
-  };
-
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      queryFn: getQueryFn({ on401: "throw" }),
-      refetchInterval: false,
-      refetchOnWindowFocus: false,
-      staleTime: Infinity,
-      retry: false,
-    },
-    mutations: {
-      retry: false,
-    },
-  },
-});
+export const queryClient = new QueryClient();
