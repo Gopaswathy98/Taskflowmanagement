@@ -5,12 +5,11 @@ import { useToast } from "@/hooks/use-toast";
 export function useAuth() {
   const { toast } = useToast();
 
-  // This check MUST go to Render, otherwise it thinks you are logged out
+  // ⚠️ THE FINAL FIX: This now uses apiRequest to check Render for your session
   const { data: user, isLoading, error } = useQuery({
     queryKey: ["/api/user"],
     queryFn: () => apiRequest("GET", "/api/user").then(res => res.json()),
     retry: false,
-    staleTime: Infinity, // Keep the user session active
   });
 
   const loginMutation = useMutation({
