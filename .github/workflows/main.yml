@@ -12,10 +12,6 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        # This tells the robot that ALL commands should happen inside the client folder
-        working-directory: ./client
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,14 +22,15 @@ jobs:
           node-version: "20"
 
       - name: Install and Build
+        # We manually change directory (cd) for every command to be safe
         run: |
-          npm install
-          npm run build
+          cd client && npm install
+          cd client && npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # This points to the website files inside the client folder
+          # This points to the final build folder
           path: client/dist
 
       - name: Deploy to GitHub Pages
