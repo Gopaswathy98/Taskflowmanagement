@@ -22,15 +22,15 @@ jobs:
           node-version: "20"
 
       - name: Install and Build
+        # This tells the robot exactly where to go and what to do
         run: |
-          cd client
-          npm install
-          npm run build
+          npm install --prefix client
+          npm run build --prefix client
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # This points to the exact folder where React puts your website
+          # This is the path to your finished website files
           path: client/dist
 
       - name: Deploy to GitHub Pages
