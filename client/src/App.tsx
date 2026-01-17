@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Switch, Route } from "wouter";
+import { Switch, Route, Router as WouterRouter } from "wouter"; // Added WouterRouter
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -14,7 +14,7 @@ import Tasks from "@/pages/tasks";
 import Admin from "@/pages/admin";
 import NotFound from "@/pages/not-found";
 
-function Router() {
+function Navigation() {
   const { isAuthenticated, isLoading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [taskModalOpen, setTaskModalOpen] = useState(false);
@@ -77,7 +77,10 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Router />
+        {/* The "base" property below is what fixes the 404 error when clicking buttons */}
+        <WouterRouter base="/Taskflowmanagement">
+          <Navigation />
+        </WouterRouter>
       </TooltipProvider>
     </QueryClientProvider>
   );
