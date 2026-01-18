@@ -6,20 +6,18 @@ import { apiRequest } from "@/lib/queryClient";
 
 export default function Landing() {
   const [, setLocation] = useLocation();
-  
-  // ✅ Matches your GitHub repository name exactly
-  const BASE_PATH = "/Taskflowmanagement";
 
   const handleLogin = async () => {
     try {
-      // 1. Background login call to Render
+      // Background login call
       await apiRequest("POST", "/api/login", {});
       
-      // 2. Navigate relative to your GitHub folder
-      setLocation(`${BASE_PATH}/dashboard`);
+      // ✅ THE FIX: Use only "/dashboard". 
+      // The "Router" in App.tsx will add the "/Taskflowmanagement" part automatically.
+      setLocation("/dashboard");
     } catch (error) {
-      console.error("Login failed, forcing dashboard move:", error);
-      setLocation(`${BASE_PATH}/dashboard`);
+      console.error("Login failed, moving to dashboard anyway:", error);
+      setLocation("/dashboard");
     }
   };
 
