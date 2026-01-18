@@ -9,11 +9,11 @@ export default function Landing() {
 
   const handleLogin = async () => {
     try {
-      // Background login call
+      // 1. Tell Render to log us in
       await apiRequest("POST", "/api/login", {});
       
-      // ✅ THE FIX: Use only "/dashboard". 
-      // The "Router" in App.tsx will add the "/Taskflowmanagement" part automatically.
+      // 2. SUCCESS: Move to the dashboard. 
+      // ✅ We use just "/dashboard" because the Router handles the rest.
       setLocation("/dashboard");
     } catch (error) {
       console.error("Login failed, moving to dashboard anyway:", error);
