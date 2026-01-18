@@ -7,7 +7,7 @@ import Dashboard from "@/pages/dashboard";
 
 function RouterConfig() {
   return (
-    // ✅ Use the repository name as the base
+    // ✅ This prevents the 404 on GitHub Pages
     <Router base="/Taskflowmanagement">
       <Switch>
         <Route path="/" component={Landing} />
