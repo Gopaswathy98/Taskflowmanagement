@@ -7,14 +7,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default defineConfig(async () => {
-  // We only load Replit plugins if we are NOT in production
   const isProduction = process.env.NODE_ENV === "production";
   
   const plugins = [react()];
 
+  // Only attempt to load Replit-specific plugins if not in production
   if (!isProduction) {
     try {
-      // Try to load Replit plugins only when developing locally/on Replit
       const { cartographer } = await import("@replit/vite-plugin-cartographer");
       const runtimeErrorOverlay = await import("@replit/vite-plugin-runtime-error-modal");
       
@@ -27,16 +26,8 @@ export default defineConfig(async () => {
 
   return {
     plugins,
+    // FIXED: Added base to support GitHub Pages subfolder
+    base: "/Taskflowmanagement/", 
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "client", "src"),
-        "@shared": path.resolve(__dirname, "shared"),
-      },
-    },
-    root: path.resolve(__dirname, "client"),
-    build: {
-      outDir: path.resolve(__dirname, "dist/public"),
-      emptyOutDir: true,
-    },
-  };
-});
+        "@": path
