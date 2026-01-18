@@ -9,14 +9,14 @@ export default function Landing() {
 
   const handleLogin = async () => {
     try {
-      // 1. Tell Render to log us in in the background
+      // Background request to Render API
       await apiRequest("POST", "/api/login", {});
       
-      // 2. SUCCESS: Move to the dashboard. 
-      // ✅ We use just "/dashboard" because Router base handles the rest.
+      // Navigate to dashboard
+      // Router base in App.tsx handles the /Taskflowmanagement prefix
       setLocation("/dashboard");
     } catch (error) {
-      console.error("Login failed, but moving to dashboard anyway:", error);
+      console.error("Login redirecting to dashboard:", error);
       setLocation("/dashboard");
     }
   };
@@ -33,20 +33,12 @@ export default function Landing() {
             <p className="mt-2 text-secondary-600">Task Management Platform</p>
           </div>
           <div className="mt-8 space-y-4">
-            <p className="text-center text-secondary-700">
-              Streamline your workflow with our powerful task management platform
-            </p>
             <Button 
               onClick={handleLogin}
               className="w-full py-3 text-sm font-medium shadow-lg hover:shadow-xl"
             >
               Sign In to Continue
             </Button>
-          </div>
-          <div className="mt-6 text-center">
-            <p className="text-xs text-secondary-500">
-              Secure authentication powered by Render
-            </p>
           </div>
         </CardContent>
       </Card>
