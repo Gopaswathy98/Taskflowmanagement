@@ -26,8 +26,19 @@ export default defineConfig(async () => {
 
   return {
     plugins,
-    // FIXED: Added base to support GitHub Pages subfolder
+    // This fixed the white screen by pointing to the correct subfolder
     base: "/Taskflowmanagement/", 
     resolve: {
       alias: {
-        "@": path
+        "@": path.resolve(__dirname, "client", "src"),
+        "@shared": path.resolve(__dirname, "shared"),
+      },
+    },
+    root: path.resolve(__dirname, "client"),
+    build: {
+      outDir: path.resolve(__dirname, "dist", "public"),
+      emptyOutDir: true,
+      assetsDir: "assets",
+    },
+  };
+});
