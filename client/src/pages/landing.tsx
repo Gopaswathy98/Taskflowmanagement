@@ -9,14 +9,14 @@ export default function Landing() {
 
   const handleLogin = async () => {
     try {
-      // 1. Tell Render to log us in
+      // 1. Tell Render to log us in in the background
       await apiRequest("POST", "/api/login", {});
       
       // 2. SUCCESS: Move to the dashboard. 
-      // ✅ We use just "/dashboard" because the Router handles the rest.
+      // ✅ We use just "/dashboard" because Router base handles the rest.
       setLocation("/dashboard");
     } catch (error) {
-      console.error("Login failed, moving to dashboard anyway:", error);
+      console.error("Login failed, but moving to dashboard anyway:", error);
       setLocation("/dashboard");
     }
   };
