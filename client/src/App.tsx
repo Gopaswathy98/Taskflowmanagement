@@ -8,7 +8,7 @@ import Dashboard from "@/pages/dashboard";
 
 function RouterConfig() {
   return (
-    // ✅ The "base" ensures internal links don't get lost on GitHub
+    // ✅ This "base" ensures /dashboard becomes /Taskflowmanagement/dashboard correctly
     <Router base="/Taskflowmanagement">
       <Switch>
         <Route path="/" component={Landing} />
