@@ -2,6 +2,11 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import cors from "cors";
+import path, { fileURLToPath } from "path"; // Added for catch-all routing
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 
@@ -56,7 +61,6 @@ app.use((req, res, next) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
     res.status(status).json({ message });
-    // Don't throw the error in production to keep the server from crashing
     if (app.get("env") === "development") throw err; 
     console.error(err);
   });
@@ -64,7 +68,17 @@ app.use((req, res, next) => {
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
+    // 1. Serve the standard static files
     serveStatic(app);
+
+    // 2. THE CATCH-ALL: This fixes the "Stay on Sign-in" or "404" issue
+    // This tells Express: If the user goes to /dashboard, send them index.html
+    app.get("*", (req, res) => {
+      // Only catch requests that aren't API calls
+      if (!req.path.startsWith("/api")) {
+        res.sendFile(path.resolve(__dirname, "..", "dist", "public", "index.html"));
+      }
+    });
   }
 
   const port = Number(process.env.PORT) || 5000;
