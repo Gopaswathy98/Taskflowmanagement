@@ -7,19 +7,18 @@ import { apiRequest } from "@/lib/queryClient";
 export default function Landing() {
   const [, setLocation] = useLocation();
   
-  // ✅ This ensures the app navigates within the GitHub subfolder
+  // ✅ Matches your GitHub repository name exactly
   const BASE_PATH = "/Taskflowmanagement";
 
   const handleLogin = async () => {
     try {
-      // 1. Send the background request to the Render API
+      // 1. Background login call to Render
       await apiRequest("POST", "/api/login", {});
       
-      // 2. SUCCESS: Move to the dashboard using the correct GitHub path
+      // 2. Navigate relative to your GitHub folder
       setLocation(`${BASE_PATH}/dashboard`);
     } catch (error) {
-      console.error("Login request failed, but redirecting to dashboard anyway:", error);
-      // Fallback: Force navigation to the dashboard
+      console.error("Login failed, forcing dashboard move:", error);
       setLocation(`${BASE_PATH}/dashboard`);
     }
   };
@@ -35,12 +34,10 @@ export default function Landing() {
             <h2 className="text-3xl font-bold text-secondary-900">TaskFlow</h2>
             <p className="mt-2 text-secondary-600">Task Management Platform</p>
           </div>
-
           <div className="mt-8 space-y-4">
             <p className="text-center text-secondary-700">
               Streamline your workflow with our powerful task management platform
             </p>
-            
             <Button 
               onClick={handleLogin}
               className="w-full py-3 text-sm font-medium shadow-lg hover:shadow-xl"
@@ -48,7 +45,6 @@ export default function Landing() {
               Sign In to Continue
             </Button>
           </div>
-
           <div className="mt-6 text-center">
             <p className="text-xs text-secondary-500">
               Secure authentication powered by Render
