@@ -2,7 +2,8 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import cors from "cors";
-import path, { fileURLToPath } from "path"; // Added for catch-all routing
+import path from "path"; 
+import { fileURLToPath } from "url"; // FIXED: Changed 'path' to 'url'
 import { dirname } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -10,10 +11,10 @@ const __dirname = dirname(__filename);
 
 const app = express();
 
-// 1. TRUST PROXY: Essential for Render's HTTPS to handle sessions
+// 1. TRUST PROXY
 app.set("trust proxy", 1); 
 
-// 2. CORS: Allow your GitHub Pages frontend to access this API
+// 2. CORS
 app.use(cors({
   origin: "https://gopaswathy98.github.io",
   credentials: true,
@@ -27,7 +28,7 @@ app.use(express.urlencoded({ extended: false }));
 // Logging Middleware
 app.use((req, res, next) => {
   const start = Date.now();
-  const path = req.path;
+  const pathName = req.path;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
   const originalResJson = res.json;
@@ -38,8 +39,8 @@ app.use((req, res, next) => {
 
   res.on("finish", () => {
     const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
+    if (pathName.startsWith("/api")) {
+      let logLine = `${req.method} ${pathName} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
@@ -54,7 +55,6 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // registerRoutes handles your API endpoints and Auth logic
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -68,14 +68,12 @@ app.use((req, res, next) => {
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
-    // 1. Serve the standard static files
     serveStatic(app);
 
-    // 2. THE CATCH-ALL: This fixes the "Stay on Sign-in" or "404" issue
-    // This tells Express: If the user goes to /dashboard, send them index.html
+    // CATCH-ALL ROUTE
     app.get("*", (req, res) => {
-      // Only catch requests that aren't API calls
       if (!req.path.startsWith("/api")) {
+        // Point to the correct build folder on Render
         res.sendFile(path.resolve(__dirname, "..", "dist", "public", "index.html"));
       }
     });
