@@ -8,7 +8,7 @@ import Dashboard from "@/pages/dashboard";
 
 function RouterConfig() {
   return (
-    // ✅ This "base" tells wouter all routes are inside /Taskflowmanagement/
+    // ✅ The "base" ensures /dashboard becomes /Taskflowmanagement/dashboard
     <Router base="/Taskflowmanagement">
       <Switch>
         <Route path="/" component={Landing} />
