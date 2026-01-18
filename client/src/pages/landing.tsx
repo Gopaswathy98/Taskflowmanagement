@@ -1,12 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckSquare } from "lucide-react";
+import { useLocation } from "wouter";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Landing() {
-  const handleLogin = () => {
-    // ⚠️ THE LOOP BREAKER: Point this directly to your Render URL
-    // This stops the browser from looking at GitHub for the login page.
-    window.location.href = "https://taskflowmanagement.onrender.com/api/login";
+  const [, setLocation] = useLocation();
+
+  const handleLogin = async () => {
+    try {
+      // 1. We talk to Render in the BACKGROUND (no redirect)
+      await apiRequest("POST", "/api/login", {});
+      
+      // 2. SUCCESS: We stay on GitHub but move the view to Dashboard
+      setLocation("/dashboard");
+    } catch (error) {
+      console.error("Login failed:", error);
+      // Fallback: move to dashboard anyway since we are using a Guest user bypass
+      setLocation("/dashboard");
+    }
   };
 
   return (
