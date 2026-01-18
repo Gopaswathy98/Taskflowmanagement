@@ -7,7 +7,7 @@ import Dashboard from "@/pages/dashboard";
 
 function RouterConfig() {
   return (
-    // ✅ No extra slashes here, just the folder name
+    // ✅ Use the repository name as the base
     <Router base="/Taskflowmanagement">
       <Switch>
         <Route path="/" component={Landing} />
