@@ -4,17 +4,18 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react()],
-  // ✅ MUST have these slashes for GitHub Pages subfolders
-  base: "/Taskflowmanagement/", 
+  // ✅ Keeps the GitHub Pages subfolder working
+  base: "/Taskflowmanagement/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
+      // Adjusted path for shared folder since we are now inside 'client'
       "@shared": path.resolve(__dirname, "../shared"),
     },
   },
   build: {
-    // This tells Vite where to put the final website files
-    outDir: path.resolve(__dirname, "../dist/public"),
+    // Vite will now output to client/dist
+    outDir: "dist",
     emptyOutDir: true,
   },
 });
