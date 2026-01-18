@@ -6,18 +6,21 @@ import { apiRequest } from "@/lib/queryClient";
 
 export default function Landing() {
   const [, setLocation] = useLocation();
+  
+  // ✅ This ensures the app navigates within the GitHub subfolder
+  const BASE_PATH = "/Taskflowmanagement";
 
   const handleLogin = async () => {
     try {
-      // 1. We talk to Render in the BACKGROUND (no redirect)
+      // 1. Send the background request to the Render API
       await apiRequest("POST", "/api/login", {});
       
-      // 2. SUCCESS: We stay on GitHub but move the view to Dashboard
-      setLocation("/dashboard");
+      // 2. SUCCESS: Move to the dashboard using the correct GitHub path
+      setLocation(`${BASE_PATH}/dashboard`);
     } catch (error) {
-      console.error("Login failed:", error);
-      // Fallback: move to dashboard anyway since we are using a Guest user bypass
-      setLocation("/dashboard");
+      console.error("Login request failed, but redirecting to dashboard anyway:", error);
+      // Fallback: Force navigation to the dashboard
+      setLocation(`${BASE_PATH}/dashboard`);
     }
   };
 
