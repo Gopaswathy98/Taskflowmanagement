@@ -3,8 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
-  // ✅ Explicitly set the root to the client directory
-  // This tells Vite "index.html is right here in this folder"
+  // ✅ This tells Vite to look for index.html inside the 'client' folder
   root: path.resolve(__dirname), 
   
   plugins: [react()],
@@ -20,11 +19,9 @@ export default defineConfig({
   },
   
   build: {
-    // ✅ This moves the final website files up into the dist/public folder
-    // so that your Express server can find them easily
+    // ✅ This moves the final files up into the dist/public folder for the server
     outDir: path.resolve(__dirname, "../dist/public"),
     emptyOutDir: true,
-    // Helps Vite find the index.html specifically when building
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, "index.html"),
