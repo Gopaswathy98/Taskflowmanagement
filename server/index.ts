@@ -4,7 +4,7 @@ import { setupAuth } from "./replitAuth";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
-// ✅ Re-defining __dirname for ES Module scope
+// ✅ ES Module fix for __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -44,7 +44,7 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Setup Authentication
+  // Setup Authentication using replitAuth.ts
   setupAuth(app);
 
   // Error handling middleware
