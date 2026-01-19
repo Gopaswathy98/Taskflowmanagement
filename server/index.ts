@@ -1,6 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { setupVite, serveStatic, log } from "./vite";
-import { setupAuth } from "./auth";
+import { setupAuth } from "./replitAuth";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -44,7 +44,7 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Setup Authentication
+  // ✅ Using the setupAuth function from replitAuth.ts
   setupAuth(app);
 
   // Error handling middleware
