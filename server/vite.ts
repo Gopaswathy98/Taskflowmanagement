@@ -3,10 +3,11 @@ import fs from "fs";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import { type Server } from "http";
-import vite from "vite";
+// ✅ Changed to namespace import to fix the "default" export error
+import * as vite from "vite";
 import { type IncomingMessage, type ServerResponse } from "http";
 
-// ✅ Fix: Define __dirname for ES Module scope in vite.ts
+// ✅ Define __dirname for ES Module scope
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -45,7 +46,6 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  // ✅ This resolve uses the __dirname we defined above
   const distPath = path.resolve(__dirname, "public");
 
   if (!fs.existsSync(distPath)) {
