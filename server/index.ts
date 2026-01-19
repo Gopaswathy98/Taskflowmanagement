@@ -4,7 +4,7 @@ import { setupAuth } from "./auth";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
-// ✅ ES Module fix: Manually defining __dirname and __filename
+// ✅ ES Module fix for __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -66,7 +66,6 @@ app.use((req, res, next) => {
       log(`serving on port ${PORT}`);
     });
   } else {
-    // Production serving
     serveStatic(app);
     
     const PORT = process.env.PORT || 5000;
