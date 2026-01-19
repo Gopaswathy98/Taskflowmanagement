@@ -3,11 +3,8 @@ import fs from "fs";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import { type Server } from "http";
-// ✅ Changed to namespace import to fix the "default" export error
 import * as vite from "vite";
-import { type IncomingMessage, type ServerResponse } from "http";
 
-// ✅ Define __dirname for ES Module scope
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -49,13 +46,10 @@ export function serveStatic(app: Express) {
   const distPath = path.resolve(__dirname, "public");
 
   if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}. Make sure to run "npm run build" first.`
-    );
+    throw new Error(`Could not find build directory: ${distPath}`);
   }
 
   app.use(express.static(distPath));
-
   app.use("*", (_req, res) => {
     res.sendFile(path.resolve(distPath, "index.html"));
   });
