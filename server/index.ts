@@ -4,7 +4,7 @@ import { setupAuth } from "./replitAuth";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
-// ✅ ES Module fix for __dirname
+// ✅ Re-defining __dirname for ES Module scope
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -44,7 +44,7 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // ✅ Using the setupAuth function from replitAuth.ts
+  // Setup Authentication
   setupAuth(app);
 
   // Error handling middleware
@@ -65,11 +65,7 @@ app.use((req, res, next) => {
       log(`serving on port ${PORT}`);
     });
   } else {
+    // ✅ Use the serveStatic function which we will also verify
     serveStatic(app);
     
-    const PORT = process.env.PORT || 5000;
-    app.listen(PORT, "0.0.0.0", () => {
-      log(`serving on port ${PORT}`);
-    });
-  }
-})();
+    const PORT
