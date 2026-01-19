@@ -26,20 +26,22 @@ export async function setupVite(app: Express, server: Server) {
 export function serveStatic(app: Express) {
   const distPath = path.resolve(__dirname, "public");
 
-  // Force correct MIME types for static assets
-  app.use("/assets", express.static(path.resolve(distPath, "assets"), {
-    setHeaders: (res, filePath) => {
-      if (filePath.endsWith(".js")) {
-        res.setHeader("Content-Type", "application/javascript");
-      }
-    }
-  }));
+  if (!fs.existsSync(distPath)) {
+    log(`Warning: Static directory not found at ${distPath}`, "express");
+  }
 
-  app.use(express.static(distPath));
+  // Serve static files with priority
+  app.use(express.static(distPath, { index: false }));
 
+  // Catch-all for SPA routing
   app.use("*", (req, res, next) => {
     if (req.originalUrl.startsWith("/api")) return next();
+    
     const indexPath = path.resolve(distPath, "index.html");
-    res.sendFile(indexPath);
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      res.status(404).send("Frontend build not found. Please check build logs.");
+    }
   });
 }
