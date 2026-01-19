@@ -65,7 +65,12 @@ app.use((req, res, next) => {
       log(`serving on port ${PORT}`);
     });
   } else {
-    // ✅ Use the serveStatic function which we will also verify
+    // Production serving
     serveStatic(app);
     
-    const PORT
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, "0.0.0.0", () => {
+      log(`serving on port ${PORT}`);
+    });
+  }
+})();
