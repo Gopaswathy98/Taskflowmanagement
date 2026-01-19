@@ -43,23 +43,25 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  // ✅ Look for the 'public' folder inside 'dist'
+  // Check both common build locations
   const distPath = path.resolve(__dirname, "public");
+  const rootDistPath = path.resolve(__dirname, "..");
+  
+  // Choose the path that actually contains the assets
+  const actualPath = fs.existsSync(path.resolve(distPath, "assets")) 
+    ? distPath 
+    : rootDistPath;
 
-  if (!fs.existsSync(distPath)) {
-    // Fail gracefully in logs so we can see what happened
-    console.error(`ERROR: Static directory not found at ${distPath}`);
-  }
+  log(`Serving static files from: ${actualPath}`);
 
-  app.use(express.static(distPath));
+  // Serve static files (JS, CSS, Images)
+  app.use(express.static(actualPath));
 
-  // ✅ Fallback: Serve index.html for any unknown route
-  app.use("*", (_req, res) => {
-    const indexPath = path.resolve(distPath, "index.html");
-    if (fs.existsSync(indexPath)) {
-      res.sendFile(indexPath);
-    } else {
-      res.status(404).send("Frontend build files not found. Check dist/public folder.");
+  // Catch-all: serve index.html for any non-API route
+  app.use("*", (req, res, next) => {
+    if (req.path.startsWith("/api")) {
+      return next();
     }
+    res.sendFile(path.resolve(actualPath, "index.html"));
   });
 }
