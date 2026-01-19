@@ -4,7 +4,7 @@ import { setupAuth } from "./auth";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
-// ES Module fix for __dirname
+// ✅ ES Module fix for __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
