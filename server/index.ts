@@ -1,6 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
-import { setupVite, serveStatic, log } from "./vite.js";
-import { setupAuth } from "./auth.js";
+import { setupVite, serveStatic, log } from "./vite";
+import { setupAuth } from "./auth";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
