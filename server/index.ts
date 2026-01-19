@@ -4,8 +4,7 @@ import { setupAuth } from "./auth";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
-// ✅ This section fixes the "ReferenceError: __dirname is not defined"
-// and will resolve the GitHub Actions failure.
+// ✅ ES Module fix: Manually defining __dirname and __filename
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -48,9 +47,6 @@ app.use((req, res, next) => {
   // Setup Authentication
   setupAuth(app);
 
-  // Register API routes
-  // registerRoutes(app); 
-
   // Error handling middleware
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
@@ -59,7 +55,7 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // Setup Vite or static file serving based on environment
+  // Setup Vite or static file serving
   if (app.get("env") === "development") {
     const { createServer } = await import("http");
     const server = createServer(app);
@@ -70,6 +66,7 @@ app.use((req, res, next) => {
       log(`serving on port ${PORT}`);
     });
   } else {
+    // Production serving
     serveStatic(app);
     
     const PORT = process.env.PORT || 5000;
