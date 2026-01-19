@@ -1,10 +1,10 @@
 import express, { type Request, Response, NextFunction } from "express";
-import { setupVite, serveStatic, log } from "./vite";
-import { setupAuth } from "./auth";
+import { setupVite, serveStatic, log } from "./vite.js";
+import { setupAuth } from "./auth.js";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
-// ✅ ES Module fix for __dirname
+// ES Module fix for __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -55,7 +55,6 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // Setup Vite or static file serving
   if (app.get("env") === "development") {
     const { createServer } = await import("http");
     const server = createServer(app);
