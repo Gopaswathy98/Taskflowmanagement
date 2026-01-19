@@ -30,18 +30,23 @@ export function serveStatic(app: Express) {
     log(`Warning: Static directory not found at ${distPath}`, "express");
   }
 
-  // Serve static files with priority
-  app.use(express.static(distPath, { index: false }));
+  // Force correct MIME types and serve static files
+  app.use(express.static(distPath, { 
+    index: false,
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith(".js")) {
+        res.setHeader("Content-Type", "application/javascript");
+      }
+    }
+  }));
 
-  // Catch-all for SPA routing
   app.use("*", (req, res, next) => {
     if (req.originalUrl.startsWith("/api")) return next();
-    
     const indexPath = path.resolve(distPath, "index.html");
     if (fs.existsSync(indexPath)) {
       res.sendFile(indexPath);
     } else {
-      res.status(404).send("Frontend build not found. Please check build logs.");
+      res.status(404).send("Frontend build not found.");
     }
   });
 }
