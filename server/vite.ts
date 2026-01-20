@@ -28,17 +28,20 @@ export function serveStatic(app: Express) {
   
   log(`Production mode: Serving from ${distPath}`);
 
-  // Use standard express static but FORCE the correct MIME type for .js files
-  app.use(express.static(distPath, {
-    setHeaders: (res, filePath) => {
-      if (filePath.endsWith(".js")) {
-        res.setHeader("Content-Type", "application/javascript");
-        res.setHeader("X-Content-Type-Options", "nosniff");
-      }
+  // 1. Force the MIME type for ANY .js or .css file requested
+  app.use((req, res, next) => {
+    if (req.url.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (req.url.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
     }
-  }));
+    next();
+  });
 
-  // Fallback for Single Page Application (SPA)
+  // 2. Serve static files
+  app.use(express.static(distPath, { index: false }));
+
+  // 3. SPA Fallback
   app.use("*", (req, res, next) => {
     if (req.originalUrl.startsWith("/api")) return next();
     
@@ -46,7 +49,7 @@ export function serveStatic(app: Express) {
     if (fs.existsSync(indexPath)) {
       res.sendFile(indexPath);
     } else {
-      res.status(404).send("Frontend files missing. Please redeploy.");
+      res.status(404).send("Frontend build missing index.html");
     }
   });
 }
