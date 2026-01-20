@@ -24,20 +24,25 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  // We navigate to the root dist folder explicitly
+  // Render's working directory is usually /opt/render/project/src/
+  // After build, the files are in /opt/render/project/src/dist/public
   const distPath = path.resolve(__dirname, "..", "dist", "public");
   
-  log(`Server looking for assets in: ${distPath}`);
+  log(`DEBUG: Absolute path to dist: ${distPath}`);
 
   if (!fs.existsSync(distPath)) {
-    log(`ERROR: Directory not found at ${distPath}`);
+    log(`CRITICAL ERROR: Build directory missing at ${distPath}`);
   }
 
-  // 1. Serve static files with correct headers
+  // 1. Force JavaScript MIME types explicitly
   app.use(express.static(distPath, {
+    index: false,
     setHeaders: (res, filePath) => {
       if (filePath.endsWith(".js")) {
         res.setHeader("Content-Type", "application/javascript");
+      }
+      if (filePath.endsWith(".css")) {
+        res.setHeader("Content-Type", "text/css");
       }
     }
   }));
@@ -48,9 +53,9 @@ export function serveStatic(app: Express) {
     
     const indexPath = path.resolve(distPath, "index.html");
     if (fs.existsSync(indexPath)) {
-      res.sendFile(indexPath);
+      res.status(200).sendFile(indexPath);
     } else {
-      res.status(404).send("Frontend files not found. Check build path.");
+      res.status(404).send("Frontend files not found. Check deployment logs.");
     }
   });
 }
