@@ -24,13 +24,19 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  // We explicitly find the root 'dist/public' folder from the server's location
-  const distPath = path.resolve(__dirname, "..", "dist", "public");
-  
-  log(`Server searching for frontend at: ${distPath}`);
+  // Try to find the dist folder in multiple possible locations
+  const pathsToTry = [
+    path.resolve(__dirname, "..", "dist", "public"),
+    path.resolve(__dirname, "public"),
+    path.resolve(process.cwd(), "dist", "public"),
+    path.resolve(process.cwd(), "client", "dist")
+  ];
 
-  // 1. SERVE ASSETS FIRST (Fixes the MIME type error)
-  // This tells the browser: "If you want a .js file, look in the assets folder"
+  let distPath = pathsToTry.find(p => fs.existsSync(path.resolve(p, "index.html"))) || pathsToTry[0];
+  
+  log(`Final decision: Serving frontend from ${distPath}`);
+
+  // 1. Force JavaScript headers for anything in the assets folder
   app.use("/assets", express.static(path.resolve(distPath, "assets"), {
     setHeaders: (res, filePath) => {
       if (filePath.endsWith(".js")) {
@@ -42,10 +48,10 @@ export function serveStatic(app: Express) {
     }
   }));
 
-  // 2. Serve the rest of the static files
+  // 2. General static file serving
   app.use(express.static(distPath, { index: false }));
 
-  // 3. Catch-all: Send index.html for any frontend route
+  // 3. The Catch-all for SPA logic
   app.use("*", (req, res, next) => {
     if (req.originalUrl.startsWith("/api")) return next();
     
@@ -53,7 +59,7 @@ export function serveStatic(app: Express) {
     if (fs.existsSync(indexPath)) {
       res.sendFile(indexPath);
     } else {
-      res.status(404).send("Frontend build not found. Please check Render build logs.");
+      res.status(404).send("Could not find index.html. Please check Build Logs.");
     }
   });
 }
