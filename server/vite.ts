@@ -24,16 +24,17 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  // On Render, the folder structure is /opt/render/project/src/dist/public
-  const distPath = path.resolve(__dirname, "public");
-  const indexPath = path.resolve(distPath, "index.html");
+  // We navigate to the root dist folder explicitly
+  const distPath = path.resolve(__dirname, "..", "dist", "public");
+  
+  log(`Server looking for assets in: ${distPath}`);
 
-  log(`Checking for static files at: ${distPath}`);
+  if (!fs.existsSync(distPath)) {
+    log(`ERROR: Directory not found at ${distPath}`);
+  }
 
-  // 1. Explicitly serve the assets folder first
-  app.use("/assets", express.static(path.resolve(distPath, "assets"), {
-    immutable: true,
-    maxAge: "1y",
+  // 1. Serve static files with correct headers
+  app.use(express.static(distPath, {
     setHeaders: (res, filePath) => {
       if (filePath.endsWith(".js")) {
         res.setHeader("Content-Type", "application/javascript");
@@ -41,19 +42,15 @@ export function serveStatic(app: Express) {
     }
   }));
 
-  // 2. Serve everything else in dist/public
-  app.use(express.static(distPath, { index: false }));
-
-  // 3. The Catch-all: If it's not a file and not an API, send index.html
+  // 2. Catch-all for React routing
   app.use("*", (req, res, next) => {
-    if (req.originalUrl.startsWith("/api")) {
-      return next();
-    }
+    if (req.originalUrl.startsWith("/api")) return next();
     
+    const indexPath = path.resolve(distPath, "index.html");
     if (fs.existsSync(indexPath)) {
       res.sendFile(indexPath);
     } else {
-      res.status(404).send("Critical Error: index.html not found in dist/public");
+      res.status(404).send("Frontend files not found. Check build path.");
     }
   });
 }
