@@ -2,11 +2,13 @@
   "name": "rest-express",
   "version": "1.0.0",
   "type": "module",
+  {
   "scripts": {
-    "dev": "node server/index.ts",
-    "build": "vite build client && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/index.js",
-    "start": "node dist/index.js"
-  },
+    "build": "vite build",
+    "dev": "vite"
+  }
+}
+  
   "dependencies": {
     "express": "^4.19.2",
     "path": "^0.12.7"
