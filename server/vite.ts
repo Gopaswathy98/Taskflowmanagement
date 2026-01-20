@@ -28,20 +28,22 @@ export function serveStatic(app: Express) {
   
   log(`Production mode: Serving from ${distPath}`);
 
-  // 1. Force the MIME type for ANY .js or .css file requested
+  // 1. Force the MIME type for any .js or .css file
+  // This specifically fixes the "MIME type of 'text/html'" error
   app.use((req, res, next) => {
     if (req.url.endsWith('.js')) {
       res.setHeader('Content-Type', 'application/javascript');
+      res.setHeader('X-Content-Type-Options', 'nosniff');
     } else if (req.url.endsWith('.css')) {
       res.setHeader('Content-Type', 'text/css');
     }
     next();
   });
 
-  // 2. Serve static files
+  // 2. Serve static files from the dist/public folder
   app.use(express.static(distPath, { index: false }));
 
-  // 3. SPA Fallback
+  // 3. SPA Fallback: Serve index.html for any route that isn't an API
   app.use("*", (req, res, next) => {
     if (req.originalUrl.startsWith("/api")) return next();
     
@@ -49,7 +51,7 @@ export function serveStatic(app: Express) {
     if (fs.existsSync(indexPath)) {
       res.sendFile(indexPath);
     } else {
-      res.status(404).send("Frontend build missing index.html");
+      res.status(404).send("Frontend build missing index.html. Please check Render logs.");
     }
   });
 }
