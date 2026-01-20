@@ -24,34 +24,34 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(__dirname, "public");
+  // This looks at /opt/render/project/src/dist/public
+  const distPath = path.resolve(process.cwd(), "dist", "public");
   
-  log(`Production mode: Serving from ${distPath}`);
+  log(`Checking directory: ${distPath}`);
+  
+  if (fs.existsSync(distPath)) {
+    const files = fs.readdirSync(distPath);
+    log(`Files found in dist/public: ${files.join(", ")}`);
+  } else {
+    log(`CRITICAL: dist/public does not exist at ${distPath}`);
+  }
 
-  // 1. Force the MIME type for any .js or .css file
-  // This specifically fixes the "MIME type of 'text/html'" error
+  // Force Headers
   app.use((req, res, next) => {
-    if (req.url.endsWith('.js')) {
-      res.setHeader('Content-Type', 'application/javascript');
-      res.setHeader('X-Content-Type-Options', 'nosniff');
-    } else if (req.url.endsWith('.css')) {
-      res.setHeader('Content-Type', 'text/css');
-    }
+    if (req.url.endsWith('.js')) res.setHeader('Content-Type', 'application/javascript');
+    if (req.url.endsWith('.css')) res.setHeader('Content-Type', 'text/css');
     next();
   });
 
-  // 2. Serve static files from the dist/public folder
   app.use(express.static(distPath, { index: false }));
 
-  // 3. SPA Fallback: Serve index.html for any route that isn't an API
   app.use("*", (req, res, next) => {
     if (req.originalUrl.startsWith("/api")) return next();
-    
     const indexPath = path.resolve(distPath, "index.html");
     if (fs.existsSync(indexPath)) {
       res.sendFile(indexPath);
     } else {
-      res.status(404).send("Frontend build missing index.html. Please check Render logs.");
+      res.status(404).send("Fallback: index.html not found.");
     }
   });
 }
