@@ -24,19 +24,14 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  // Render's working directory is usually /opt/render/project/src/
-  // After build, the files are in /opt/render/project/src/dist/public
+  // We explicitly find the root 'dist/public' folder from the server's location
   const distPath = path.resolve(__dirname, "..", "dist", "public");
   
-  log(`DEBUG: Absolute path to dist: ${distPath}`);
+  log(`Server searching for frontend at: ${distPath}`);
 
-  if (!fs.existsSync(distPath)) {
-    log(`CRITICAL ERROR: Build directory missing at ${distPath}`);
-  }
-
-  // 1. Force JavaScript MIME types explicitly
-  app.use(express.static(distPath, {
-    index: false,
+  // 1. SERVE ASSETS FIRST (Fixes the MIME type error)
+  // This tells the browser: "If you want a .js file, look in the assets folder"
+  app.use("/assets", express.static(path.resolve(distPath, "assets"), {
     setHeaders: (res, filePath) => {
       if (filePath.endsWith(".js")) {
         res.setHeader("Content-Type", "application/javascript");
@@ -47,15 +42,18 @@ export function serveStatic(app: Express) {
     }
   }));
 
-  // 2. Catch-all for React routing
+  // 2. Serve the rest of the static files
+  app.use(express.static(distPath, { index: false }));
+
+  // 3. Catch-all: Send index.html for any frontend route
   app.use("*", (req, res, next) => {
     if (req.originalUrl.startsWith("/api")) return next();
     
     const indexPath = path.resolve(distPath, "index.html");
     if (fs.existsSync(indexPath)) {
-      res.status(200).sendFile(indexPath);
+      res.sendFile(indexPath);
     } else {
-      res.status(404).send("Frontend files not found. Check deployment logs.");
+      res.status(404).send("Frontend build not found. Please check Render build logs.");
     }
   });
 }
