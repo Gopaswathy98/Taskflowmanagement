@@ -1,87 +1,112 @@
-🚀 TaskFlow - Task Management Platform
-🚀 **Live Demo:** [https://taskflowmanagement.onrender.com](https://taskflowmanagement.onrender.com)
+🚀 Taskflow Management
+A modern, full-stack task management application designed to streamline workflows, track project progress, and boost productivity. Built with a focus on performance, scalability, and a clean user experience.
 
-A high-performance, full-stack web application designed for managing tasks and projects with real-time analytics and a responsive UI.
+🌟 Key Features
+Interactive Kanban Board: Drag-and-drop tasks between columns (Pending, Ongoing, Done).
 
-📸 Project Preview
-(Tip: Drag and drop your Dashboard screenshot here!)
+Real-time Updates: Stay synced with your team using live status updates.
 
-✨ Features
-Interactive Dashboard: Real-time statistics and progress tracking for all projects.
+Task Prioritization: Categorize tasks by high, medium, or low priority.
 
-Task Management: Full CRUD (Create, Read, Update, Delete) capabilities with status and priority filtering.
+User Authentication: Secure login and registration system with JWT.
 
-Mock Authentication: Seamless "Guest Mode" for instant project evaluation.
+Responsive Design: Optimized for desktop, tablet, and mobile viewing.
 
-Admin Panel: User management and role assignment functionality.
-
-Responsive Design: Fully optimized for mobile, tablet, and desktop views.
+Dark Mode Support: Seamlessly switch between light and dark themes.
 
 🛠️ Tech Stack
 Frontend
-React 18 + TypeScript: Type-safe UI components.
+React 18 (Vite)
 
-Tailwind CSS + shadcn/ui: Modern styling and accessible component library.
+Tailwind CSS (Styling)
 
-TanStack Query: Efficient server-state management and data fetching.
+Wouter (Lightweight Routing)
 
-Wouter: Lightweight routing.
+Lucide React (Iconography)
 
-Backend & Storage
-Node.js + Express: Robust backend API.
+Backend
+Node.js & Express
 
-Storage Architecture: Designed for PostgreSQL with Drizzle ORM.
+TypeScript
 
-Local Implementation: Uses a Custom In-Memory Storage Provider for easy local evaluation without external database dependencies.
+PostgreSQL (with Drizzle ORM)
 
-Authentication: Integrated Mock Auth System providing an immediate "Guest" experience.
+Zod (Validation)
 
-Development Highlight: I implemented a custom storage interface that allows the application to switch between a live PostgreSQL database and an In-Memory store. This ensures the project is portable and easy to review while maintaining a production-ready schema.
+🚀 Getting Started
+Follow these steps to get a local copy up and running.
 
-🖥️ Quick Start (Local View)
-Follow these steps to run the project on your machine:
+Prerequisites
+Node.js (v18 or higher)
 
+npm or yarn
+
+PostgreSQL instance
+
+Installation
 Clone the repository:
 
 Bash
 
-git clone <your-repo-url>
+git clone https://github.com/Gopaswathy98/Taskflowmanagement.git
 cd Taskflowmanagement
-Install dependencies:
+Install Root Dependencies:
 
 Bash
 
 npm install
-Environment Setup: Create a .env file in the root directory and add:
+Setup Environment Variables: Create a .env file in the root directory and add:
 
-Plaintext
+Code snippet
 
-SESSION_SECRET=local_development_secret_123
-REPLIT_DOMAINS=localhost:5000
-Start the server:
+DATABASE_URL=your_postgresql_connection_string
+JWT_SECRET=your_secret_key
+NODE_ENV=development
+Run Database Migrations:
+
+Bash
+
+npm run db:push
+Start Development Server:
 
 Bash
 
 npm run dev
-Access the App: Open http://localhost:5000/. Click "Sign In" to be automatically logged in as a Guest.
+Your app will be running at http://localhost:5000.
 
-📂 Project Structure
+📁 Project Structure
 Plaintext
 
-├── client/              # React frontend
-│   ├── src/
-│   │   ├── components/  # Reusable UI components
-│   │   ├── pages/       # Dashboard, Tasks, and Admin views
-├── server/              # Express backend
-│   ├── storage.ts       # Interface & MemStorage implementation
-│   ├── replitAuth.ts    # Mock Auth logic
-├── shared/              # Shared Zod schemas & TypeScript types
-🛡️ Security & Performance
-Input Validation: Strict schema validation using Zod.
+├── client/                # React frontend (Vite)
+│   ├── src/               # UI components and logic
+│   └── public/            # Static assets
+├── server/                # Express backend
+│   ├── routes.ts          # API endpoints
+│   ├── auth.ts            # Authentication logic
+│   └── storage.ts         # Database interface
+├── shared/                # Shared Types/Zod Schemas
+└── dist/                  # Production build output
+🌐 Deployment
+The project is configured for easy deployment on Render.
 
-Role-Based Access: Protected routes based on user roles (Admin/User).
+Frontend: Deployed as a Static Site from the client folder.
 
-Optimistic Updates: UI stays fast by updating tasks locally before the server responds.
+Backend: Deployed as a Web Service running the Express server.
+
+Database: Hosted PostgreSQL instance.
+
+🤝 Contributing
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create.
+
+Fork the Project
+
+Create your Feature Branch (git checkout -b feature/AmazingFeature)
+
+Commit your Changes (git commit -m 'Add some AmazingFeature')
+
+Push to the Branch (git push origin feature/AmazingFeature)
+
+Open a Pull Request
 
 📄 License
-This project is open-source and available under the MIT License.
+Distributed under the MIT License. See LICENSE for more information.
