@@ -12,11 +12,10 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
-      "@shared": path.resolve(__dirname, "../shared"),
+      "@shared": path.resolve(__dirname, "../../shared"),
     },
   },
   build: {
-    // This puts the output in client/dist
     outDir: "dist",
     emptyOutDir: true,
   },
