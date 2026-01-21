@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "node server/index.ts",
-    "build": "vite build client || vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/index.js",
+    "build": "vite build client && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/index.js",
     "start": "node dist/index.js"
   },
   "dependencies": {
