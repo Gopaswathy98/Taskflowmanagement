@@ -1,10 +1,14 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import path from "path";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default defineConfig({
   plugins: [react()],
-  // IMPORTANT: Ensure base is either '/' or removed entirely
+  // Ensures the app loads correctly at the root URL
   base: "/", 
   resolve: {
     alias: {
@@ -13,7 +17,9 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: path.resolve(__dirname, "../dist/public"),
+    // This is the CRITICAL fix: 
+    // It saves the build inside the 'client/dist' folder
+    outDir: "dist",
     emptyOutDir: true,
   },
 });
