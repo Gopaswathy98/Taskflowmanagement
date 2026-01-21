@@ -8,7 +8,6 @@ const __dirname = dirname(__filename);
 
 export default defineConfig({
   plugins: [react()],
-  // Ensures the app loads correctly at the root URL
   base: "/", 
   resolve: {
     alias: {
@@ -17,8 +16,7 @@ export default defineConfig({
     },
   },
   build: {
-    // This is the CRITICAL fix: 
-    // It saves the build inside the 'client/dist' folder
+    // This puts the output in client/dist
     outDir: "dist",
     emptyOutDir: true,
   },
