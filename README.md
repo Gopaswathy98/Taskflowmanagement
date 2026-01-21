@@ -1,7 +1,9 @@
-🚀 Taskflow Management
+🚀 **Taskflow Management**
+
 A modern, full-stack task management application designed to streamline workflows, track project progress, and boost productivity. Built with a focus on performance, scalability, and a clean user experience.
 
 🌟 Key Features
+
 Interactive Kanban Board: Drag-and-drop tasks between columns (Pending, Ongoing, Done).
 
 Real-time Updates: Stay synced with your team using live status updates.
@@ -15,6 +17,7 @@ Responsive Design: Optimized for desktop, tablet, and mobile viewing.
 Dark Mode Support: Seamlessly switch between light and dark themes.
 
 🛠️ Tech Stack
+
 Frontend
 React 18 (Vite)
 
@@ -34,6 +37,7 @@ PostgreSQL (with Drizzle ORM)
 Zod (Validation)
 
 🚀 Getting Started
+
 Follow these steps to get a local copy up and running.
 
 Prerequisites
@@ -75,6 +79,7 @@ npm run dev
 Your app will be running at http://localhost:5000.
 
 📁 Project Structure
+
 Plaintext
 
 ├── client/                # React frontend (Vite)
@@ -86,7 +91,9 @@ Plaintext
 │   └── storage.ts         # Database interface
 ├── shared/                # Shared Types/Zod Schemas
 └── dist/                  # Production build output
+
 🌐 Deployment
+
 The project is configured for easy deployment on Render.
 
 Frontend: Deployed as a Static Site from the client folder.
@@ -96,6 +103,7 @@ Backend: Deployed as a Web Service running the Express server.
 Database: Hosted PostgreSQL instance.
 
 🤝 Contributing
+
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create.
 
 Fork the Project
@@ -109,4 +117,5 @@ Push to the Branch (git push origin feature/AmazingFeature)
 Open a Pull Request
 
 📄 License
+
 Distributed under the MIT License. See LICENSE for more information.
