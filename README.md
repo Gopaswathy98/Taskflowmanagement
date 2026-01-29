@@ -3,7 +3,9 @@
 TaskFlow Management is a robust, full-stack workflow platform designed to bridge the gap between team productivity and real-time task tracking. Built with a focus on Type Safety, Scalability, and Performance, it provides a seamless experience for managing complex project lifecycles.
 
 Login Page: ![TaskFlow Login](taskflow-login.png)
+
 Main Dashboard: ![TaskFlow Dashboard](taskflow-dashboard.png)
+
 Functional Demo: ![TaskFlow Demo](taskflow-demo.png)
 
 🛠️ Tech Stack
